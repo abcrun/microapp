@@ -1,0 +1,44 @@
+{
+  "name": "@dabobo/microapp",
+  "version": "0.1.0",
+  "description": "A Front-End Microapp Library With Iframe",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abcrun/microapp.git"
+  },
+  "main": "./src/index.js",
+  "author": "hrdesign@163.com",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "huskyhook": "husky install",
+    "lint": "eslint \"{,src/**/*}.{js}\"",
+    "prettier": "prettier --write \"{,src/**/*}.{js,ts,jsx,tsx,json,css,less,scss,styl,vue}\""
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.7",
+    "prettier": "^2.3.2",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.0.0",
+    "eslint": "^7.2.0"
+  },
+  "engines": {
+    "node": "^12.0.0 || >= 14.0.0"
+  }
+}
