@@ -1,5 +1,3 @@
-import { loadScript, run } from '../utils';
-
 export default function elment(context, frame) {
   const { contentWindow: w } = frame;
   const { origin } = context;
@@ -24,7 +22,9 @@ export default function elment(context, frame) {
 
       // 如果是script且script包含脚本不是src
       if (tag(first) === 'script' && first.innerHTML) {
-        run(first.innerHTML, context);
+        this.evalScript(first.innerHTML, context);
+
+        return;
       }
 
       return originM.apply(this, args);
@@ -40,9 +40,7 @@ export default function elment(context, frame) {
       nvalue = origin + url;
 
       if (name === 'src' && tag(this) === 'script') {
-        loadScript(nvalue).then((code) => {
-          run(code, context);
-        });
+        this.loadScript(nvalue);
 
         return;
       }

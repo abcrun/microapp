@@ -1,4 +1,18 @@
-import { getLocation } from '../utils';
+const getLocation = function loc(origin) {
+  const arr = /(https?:)\/\/([^/:]+)(:\d+)?\/?$/.exec(origin) || [
+    '',
+    '',
+    '',
+    '',
+  ];
+
+  const protocol = arr[1] || document.location.protocol;
+  const hostname = arr[2];
+  const port = arr[3] ? arr[3].substring(1) : '';
+  const host = `${protocol}//${hostname}`;
+
+  return { protocol, hostname, port, host };
+};
 
 export default class Location {
   constructor(context, frame) {

@@ -9,13 +9,11 @@ export default class History {
           case 'pushState':
           case 'replaceState':
             return (...args) => {
-              if (!context.active) return history[name];
-
               const [opt, title, path] = args;
               const npath = path.replace(location.origin, '');
               const fromapp = true;
-              return window.history[name].call(
-                window.history,
+
+              return window.history[name](
                 opt,
                 title,
                 `${context.name}${npath}`,
