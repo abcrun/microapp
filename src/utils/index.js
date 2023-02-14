@@ -48,7 +48,9 @@ const watchState = (microapp) => {
       origin.apply(window.history, args.slice(0, 3));
 
       const url = window.location.href;
-      sealMicroApp(url, { trigger, method });
+      setTimeout(() => {
+        sealMicroApp(url, { trigger, method });
+      }, 0);
     };
   });
 };

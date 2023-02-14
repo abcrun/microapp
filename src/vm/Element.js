@@ -1,6 +1,5 @@
 export default function elment(context, frame) {
   const { contentWindow: w } = frame;
-  const { origin } = context;
   const tag = (el) => el.nodeName.toLowerCase();
 
   ['appendChild', 'append', 'insertBefore'].forEach((method) => {
@@ -36,11 +35,10 @@ export default function elment(context, frame) {
     const reg = /\/\//;
     let nvalue = value;
     if ((name === 'href' || name === 'src') && !reg.test(value)) {
-      const url = value.replace(/^\.*/, '');
-      nvalue = origin + url;
+      nvalue = value.replace(/^\.*\//, context.origin + '/');
 
       if (name === 'src' && tag(this) === 'script') {
-        this.loadScript(nvalue);
+        context.loadScript(nvalue);
 
         return;
       }

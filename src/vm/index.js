@@ -7,13 +7,9 @@ import Storage from './Storage';
 const getScriptCode = (url) => window.fetch(url).then((res) => res.text());
 
 export default class VM {
-  constructor(name, shared = {}) {
-    const frame = document.createElement('iframe');
-    frame.id = name;
-    frame.name = name;
+  constructor(name, shared = {}, frame) {
     this.name = name;
     this.frame = frame;
-
     this.origin = window.location.origin;
     this.window = new Window(shared, this, frame);
     this.document = new Document(this, frame);
@@ -23,31 +19,26 @@ export default class VM {
     this.sessionStorage = new Storage(this, 'sessionStorage');
   }
 
-  load(option) {
-    const { url = '', root, lifecycle = () => {} } = option;
+  loadPage(option) {
+    const { url = '', lifecycle = () => {}, onData = () => {} } = option;
     const origin = (url.match(/^https?:\/\/[^/]+/i) || [''])[0];
 
     this.origin = origin;
     this.option = option;
 
-    if (!url) return;
-
     const name = this.name;
     const self = this;
+
+    if (!url) {
+      throw new Error(`App["${name}"] needs "url" option!`);
+    }
 
     return new Promise((resolve) => {
       window
         .fetch(url)
         .then((res) => res.text())
         .then((html) => {
-          const frame = document.createElement('iframe');
-          frame.id = name;
-          frame.name = name;
-          frame.style.cssText = 'display: none';
-          (root
-            ? document.querySelectorAll(root)[0]
-            : document.body
-          ).appendChild(frame);
+          const frame = self.frame;
 
           // bootstrap
           lifecycle({ vm: self, status: 'bootstrapped' });
@@ -67,10 +58,10 @@ export default class VM {
             const code = script.innerHTML;
 
             if (src) {
-              const url = src.replace(/^\.*/, '');
+              const url = src.replace(/^\.*\//, origin + '/');
               script.remove();
 
-              return getScriptCode(origin + url);
+              return getScriptCode(url);
             }
 
             // eslint-disable-next-line
@@ -80,14 +71,14 @@ export default class VM {
 
           [...links].forEach((link) => {
             const href = link.getAttribute('href');
-            const url = href.replace(/^\.*/, '');
+            const url = href.replace(/^\.*\//, origin + '/');
 
             if (/\.js/.test(href)) {
               link.remove();
               // link.removeAttribute('href');
               // pool.push(loadScript(origin + url));
             } else {
-              link.setAttribute('href', origin + url);
+              link.setAttribute('href', url);
             }
           });
 
@@ -114,8 +105,9 @@ export default class VM {
   }
 
   loadScript(url) {
-    const code = getScriptCode(url);
-    this.evalScript(code);
+    getScriptCode(url).then((code) => {
+      this.evalScript(code);
+    });
   }
 
   evalScript(code) {

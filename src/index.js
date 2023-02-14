@@ -38,12 +38,23 @@ class Microapp {
   }
 
   createApp(opt) {
-    const { when: name = 'anonymous', shared = {} } = opt;
-    const vm = new VM(name, shared);
+    const { when: name = '/anonymous', shared = {}, root } = opt;
+
+    const frame = document.createElement('iframe');
+    frame.id = name;
+    frame.name = name;
+    frame.style.cssText = 'display: none';
+    document.querySelectorAll(root)[0].appendChild(frame);
+
+    const vm = new VM(name, shared, frame);
     this.apps[name] = vm;
     this.active = vm;
 
-    return vm.load(opt);
+    return vm.loadPage(opt).then((opt) => {
+      frame.style.cssText = cssText;
+
+      return Promise.resolve(opt);
+    });
   }
 
   loadApp(name) {
@@ -113,5 +124,5 @@ export default {
 
     return microapp;
   },
-  vm: VM,
+  VM,
 };
