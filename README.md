@@ -6,23 +6,27 @@ A Front-End Microapp Library Width Iframe.
 
 ### How to Use It
 
+##### As a microapp
+
 ```javascript
 import Microapp from '@dabobo/microapp';
 
-// rootid表示dom的class或者id -> #id, .class 
-const microapp = Microapp.create('#rootid');
+const microapp = Microapp.create('#querySelectorString');
 microapp.regist([
   {
     when: '/app1',
-    origin: 'http://localhost:1000', // 设置允许跨域访问
+    url: 'http://localhost:1000', // need allow cross domain request
+    onData: function (html) { // you can use this function to modify the response html of the microapp url, return string. 
+      return html;
+    },
     lifecycle: (opt) => {
-      // status: bootstrapped, mounted, actived, active, deactived, destroy -> 生命周期字面含义
-      // vm表示对应微应用的context
-      // method表示pushstate还是replacestate触发的行为
-      // trigger: mainapp, microapp -> mainapp表示再主应用中点击菜单或者主应用路由触发激活子应用，microapp表示再微应用内部路由变化
+      // status: bootstrapped, mounted, actived, active, deactived, beforeDestroy, destroyed
+      // vm: vm context
+      // method: pushstate or replacestate trigger history change
+      // trigger: mainapp, microapp -> mainapp trigger histroy change，microapp trigger history change
       const { status, vm, method, trigger } = opt;
 
-      // 如果子应用把router绑定到其window对象下，如果是主应用触发的子应用路由改变，可以通过这种方式渲染对应路由的页面
+      // a route change demo
       if (status !== 'mounted' && trigger === 'mainapp') {
         const { window: w, location } = vm;
         const { pathname } = location;
@@ -43,6 +47,24 @@ microapp.regist([
     },
   }
 ]);
-
-
 ```
+
+##### As a VM
+
+```javascript
+import Microapp from '@dabobo/microapp';
+
+const iframe = document.createElement(iframe);
+iframe.style.cssText = 'display: none';
+document.body.appendChild(iframe);
+
+const name = 'vmname'; // give the vm a name
+const shared = {}; // in the vm, if you run `window.name`, the vm will read the `shared[name]` first. You can set attributes to shared object out of the vm, then vm can read these attributes
+const vm = new Microapp.VM(name, shared, iframe);
+
+// methods
+vm.loadPage(pageUrl); // load a page html to the iframe with vm
+vm.loadScript(srcUrl); // load and run the script url with vm
+vm.evalScript(code); // run the script code with the vm
+```
+
