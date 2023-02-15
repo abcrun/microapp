@@ -1,6 +1,6 @@
 {
   "name": "@dabobo/microapp",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "A Front-End Microapp Library With Iframe",
   "repository": {
     "type": "git",
