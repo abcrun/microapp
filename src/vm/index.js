@@ -38,6 +38,11 @@ export default class VM {
         .fetch(url)
         .then((res) => res.text())
         .then((html) => {
+          const res = onData(html, self);
+
+          return Promise.resolve(typeof res === 'string' ? res : html);
+        })
+        .then((html) => {
           const frame = self.frame;
 
           // bootstrap
