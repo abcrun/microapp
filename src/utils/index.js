@@ -20,7 +20,6 @@ const watchState = (microapp) => {
     if (active) {
       if (active.name !== name) microapp.deActive();
 
-      // 在下一个app加载之后判断frame是否由于新的app的append而被动删除, 此时需要destroy上一个app，为了方便记录上一个app的name，这里将destroy的判断放在前面，所以checkToTriggerDestroy通过延时函数处理
       checkToTriggerDestroy(active.name);
     }
 
@@ -43,7 +42,7 @@ const watchState = (microapp) => {
     const origin = window.history[method];
 
     window.history[method] = (...args) => {
-      // microapp -> 子应用调用history api， mainapp -> 主应用调用history api
+      // microapp -> microapp trigger history api， mainapp -> main app trigger history api
       const trigger = args.length === 4 ? 'microapp' : 'mainapp';
       origin.apply(window.history, args.slice(0, 3));
 

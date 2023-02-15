@@ -6,7 +6,6 @@ export default function elment(context, frame) {
     const originM = w.Element.prototype[method];
 
     w.Element.prototype[method] = function fn(...args) {
-      // 拦截body
       const [first] = args;
       // if (
       //   tag(this) === 'body' &&

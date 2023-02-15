@@ -14,14 +14,12 @@ const removeEvent = (name, w) =>
 export default class Window {
   constructor(shared, context, frame) {
     const { contentWindow: w } = frame;
-    // 防止子应用全局设置变量时溢出到父应用
     const $window = {};
 
-    // 单独处理Element和Request
     Request(context, frame);
     Element(context, frame);
 
-    // share的属性不允许修改
+    // share attributes read only
     return new Proxy(w, {
       set(target, name, value) {
         $window[name] = value;
@@ -35,6 +33,8 @@ export default class Window {
         if ($window[name]) return $window[name];
 
         switch (name) {
+          case 'isMicroapp':
+            return true;
           case 'top':
           case 'self':
           case 'parent':
@@ -66,7 +66,6 @@ export default class Window {
         }
 
         const value = target[name];
-        // 构造函数和通过bind指定的fn不能再通过bind指定内部this
         if (typeof value === 'function' && !isConstructor(value)) {
           return value.bind && value.bind(target);
         }
