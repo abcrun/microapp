@@ -43,6 +43,7 @@ class Microapp {
     const frame = document.createElement('iframe');
     frame.id = name;
     frame.name = name;
+    frame.frameborder = 0;
     frame.style.cssText = 'display: none';
     document.querySelectorAll(root)[0].appendChild(frame);
 
