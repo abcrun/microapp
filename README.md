@@ -11,7 +11,8 @@ A Front-End Microapp Library Width Iframe.
 ```javascript
 import Microapp from '@dabobo/microapp';
 
-const microapp = Microapp.create('#querySelectorString');
+// root is a querySelector string
+const microapp = Microapp.create('#root');
 microapp.regist([
   {
     when: '/app1',
@@ -63,7 +64,7 @@ const shared = {}; // in the vm, if you run `window.name`, the vm will read the 
 const vm = new Microapp.VM(name, shared, iframe);
 
 // methods
-vm.loadPage(pageUrl); // load a page html to the iframe with vm
+vm.loadPage(option); // load a page to the iframe with vm - option: { url, onData, lifecycle }
 vm.loadScript(srcUrl); // load and run the script url with vm
 vm.evalScript(code); // run the script code with the vm
 ```
